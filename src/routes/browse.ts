@@ -203,5 +203,27 @@ export function addQueryParametersToItemLink(collection: STACCollection, req: Re
   const originalQueryString = req.originalUrl.split("?")[1] || "";
   const queryString = originalQueryString ? `?${originalQueryString}` : "";
 
-  if (itemsLink) itemsLink.href = `${itemsLink.href}${queryString}`;
+  if (!itemsLink) {
+    return;
+  }
+
+  if (originalQueryString) {
+    const searchParams = new URLSearchParams(originalQueryString);
+
+    // can add any parameters you do not want
+    const collectionOnlyParams = ["q"]; 
+    
+    collectionOnlyParams.forEach((param) => {
+      searchParams.delete(param);
+    }); 
+
+     const newQueryString = decodeURIComponent(searchParams.toString());
+    
+    // ? if more parameters
+    const queryStringToAppend = newQueryString ? `?${newQueryString}` : "";
+
+
+    itemsLink.href = `${itemsLink.href}${queryStringToAppend}`;
+
+  }
 }
